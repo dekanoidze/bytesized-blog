@@ -1,0 +1,13 @@
+spring:
+  profiles:
+    active: dev
+  thymeleaf:
+    cache: false
+  servlet:
+    multipart:
+      max-file-size: ${blog.max-image-upload-size}
+      max-request-size: ${blog.max-image-upload-size}
+
+blog:
+  platform-name: ByteSized Blog Platform
+  max-image-upload-size: 5MB

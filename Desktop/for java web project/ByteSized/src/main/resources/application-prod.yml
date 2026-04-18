@@ -1,0 +1,16 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/bytesized_blog
+    driver-class-name: org.postgresql.Driver
+    username: bytesized_user
+    password: change-me
+  jpa:
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: false
+  sql:
+    init:
+      mode: never
