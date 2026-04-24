@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${platformName}">ByteSized Blog Platform</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<header class="container header">
+    <img th:src="@{/images/logo.svg}" alt="ByteSized logo" class="logo">
+    <h1 th:text="${platformName}">ByteSized Blog Platform</h1>
+</header>
+
+<main class="container">
+    <div th:if="${successMessage}" class="alert-success" th:text="${successMessage}"></div>
+    <a class="button" th:href="@{/posts/new}">Create New Post</a>
+
+    <section th:if="${posts.content.isEmpty()}">
+        <p>No posts yet. Be the first to publish one.</p>
+    </section>
+
+    <section th:unless="${posts.content.isEmpty()}">
+        <article class="post-card" th:each="post : ${posts.content}">
+            <h2 th:text="${post.title}">Post title</h2>
+            <small th:text="${#temporals.format(post.createdAt, 'yyyy-MM-dd HH:mm')}">date</small>
+            <img th:if="${post.coverImagePath != null}" th:src="@{${post.coverImagePath}}" alt="Cover image" class="cover-image">
+            <p th:text="${post.content}">Post content</p>
+        </article>
+    </section>
+
+    <div class="pagination">
+        <a th:if="${!posts.first}" th:href="@{/(page=${currentPage - 1})}">Previous</a>
+        <span>Page <span th:text="${posts.number + 1}">1</span> of <span th:text="${posts.totalPages == 0 ? 1 : posts.totalPages}">1</span></span>
+        <a th:if="${!posts.last}" th:href="@{/(page=${currentPage + 1})}">Next</a>
+    </div>
+</main>
+</body>
+</html>
