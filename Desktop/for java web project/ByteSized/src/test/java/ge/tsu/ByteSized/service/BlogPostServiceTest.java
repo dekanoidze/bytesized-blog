@@ -17,8 +17,10 @@ import org.springframework.data.domain.Sort;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -88,5 +90,23 @@ class BlogPostServiceTest {
         assertThat(responses).hasSize(1);
         assertThat(responses.getFirst().id()).isEqualTo(10L);
         assertThat(responses.getFirst().title()).isEqualTo("API Post");
+    }
+
+    @Test
+    void deleteById_removesExistingPost() {
+        when(blogPostRepository.existsById(5L)).thenReturn(true);
+
+        blogPostService.deleteById(5L);
+
+        verify(blogPostRepository).deleteById(5L);
+    }
+
+    @Test
+    void deleteById_throwsWhenPostMissing() {
+        when(blogPostRepository.existsById(99L)).thenReturn(false);
+
+        assertThatThrownBy(() -> blogPostService.deleteById(99L))
+                .isInstanceOf(NoSuchElementException.class)
+                .hasMessageContaining("99");
     }
 }

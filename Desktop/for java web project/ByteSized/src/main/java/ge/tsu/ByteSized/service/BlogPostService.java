@@ -7,6 +7,8 @@ import ge.tsu.ByteSized.model.BlogPost;
 import ge.tsu.ByteSized.repository.BlogPostRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -21,6 +23,7 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.UUID;
 
 @Service
@@ -41,6 +44,7 @@ public class BlogPostService {
     }
 
     @Transactional
+    @CacheEvict(value = "blogPosts", allEntries = true)
     public BlogPost createPost(CreateBlogPostRequest request) {
         BlogPost blogPost = new BlogPost();
         blogPost.setTitle(request.getTitle().trim());
@@ -54,6 +58,7 @@ public class BlogPostService {
     }
 
     @Transactional(readOnly = true)
+    @Cacheable("blogPosts")
     public List<BlogPostResponse> findAllForApi() {
         return blogPostRepository.findAll(Sort.by(Sort.Direction.DESC, "createdAt"))
                 .stream()
@@ -71,6 +76,16 @@ public class BlogPostService {
                                         comment.getCreatedAt()))
                                 .toList()))
                 .toList();
+    }
+
+    @Transactional
+    @CacheEvict(value = "blogPosts", allEntries = true)
+    public void deleteById(Long id) {
+        if (!blogPostRepository.existsById(id)) {
+            throw new NoSuchElementException("Blog post not found: " + id);
+        }
+        blogPostRepository.deleteById(id);
+        log.info("Deleted blog post id={}", id);
     }
 
     private String storeImage(MultipartFile file) {
