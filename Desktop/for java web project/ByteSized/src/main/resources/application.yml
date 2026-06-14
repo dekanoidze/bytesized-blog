@@ -11,3 +11,9 @@ spring:
 blog:
   platform-name: ByteSized Blog Platform
   max-image-upload-size: 5MB
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
