@@ -151,7 +151,3 @@ Invoke-WebRequest -Uri "http://localhost:8080/api/posts/1" -Method DELETE -Heade
 ## Author
 
 **Luka Dekanoidze** — [GitHub](https://github.com/dekanoidze)
-
-## License
-
-This project was created as a university coursework assignment.
